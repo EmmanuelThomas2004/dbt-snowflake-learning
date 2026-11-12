@@ -1,0 +1,9 @@
+SELECT 
+ CUSTOMER_ID,
+    CUSTOMER_NAME,
+    EMAIL,
+    CITY,
+    COUNTRY,
+    REGISTRATION_DATE
+    FROM {{source('raw_data', 'CUSTOMERS')}}
+    WHERE COUNTRY = 'India'

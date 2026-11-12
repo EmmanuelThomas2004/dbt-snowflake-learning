@@ -1,0 +1,47 @@
+version: 2
+models:
+ -  name: dim_customers
+    columns:
+     -  name: CUSTOMER_ID
+        decscription: "the unique identifer fr each customer"
+
+        data_tests:
+         -  unique
+         -  not_null
+ -   name: stg_orders
+     columns:
+      -  name: ORDER_STATUS
+         description: "the status  of order"
+         data_tests:
+          -  accepted_values:
+              arguments:
+               values: ['Pending', 'Shipped', 'Delivered', 'Cancelled']
+ -  name: fct_orders
+    config:
+      contract:
+       enforced: true
+    columns:
+     -  name: ORDER_ID
+        datatype:  number
+     -  name: CUSTOMER_ID
+        datatype:number
+        data_tests:
+        -  relationships:
+            arguments:
+               to: ref('dim_customers')
+               field: CUSTOMER_ID
+unit_tests:
+   -  name: test_order_status
+   model: int_order_discount
+   given:
+    -  input: ref('stg_orders')
+       rows:
+        - {ORDER_ID: 101, TOTAL_AMOUNT: 1000}
+      -   {ORDER_ID: 102, TOTAL_AMOUNT: 2000}
+      expect:
+        rows:
+        - {ORDER_ID: 101, TOTAL_AMOUNT: 1000, DISCOUNT_AMOUNT: 100}
+        - {ORDER_ID: 102, TOTAL_AMOUNT: 2000, DISCOUNT_AMOUNT: 200}
+
+
+
